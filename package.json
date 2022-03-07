@@ -1,0 +1,16 @@
+{
+  "name": "energiapp",
+  "version": "1.0.0",
+  "dependencies": {
+    "server": "file:server\\"
+  },
+  "scripts": {
+    "server": "npm run start --prefix server",
+    "client": "http-server ./web/",
+    "start": "concurrently \"npm run server\" \"npm run client\""
+  },
+  "devDependencies": {
+    "concurrently": "^7.0.0",
+    "http-server": "^14.1.0"
+  }
+}

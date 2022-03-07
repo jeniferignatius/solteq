@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="styles.css" />
+    <title>Energia</title>
+  </head>
+  <body>
+    <div class="wrapper">
+      <div class="wrapper-child left">
+        <h2>Hakaniemen Kauppahallin  energiankulutus vuonna 2019</h2>
+        <div id="content"><!-- 2019 report here --></div>
+      </div>
+      <div class="wrapper-child right">
+        <form>
+          <h2>Valitse aika</h2>
+          <label for="StartTime">Alku</label>
+          <input type="date" id="StartTime" name="StartTime" />
+          <label for="EndTime">Loppu</label>
+          <input type="date" id="EndTime" name="EndTime" />
+          <button type="submit">submit</button>
+        </form>
+        <div id="rangeContent"><!-- Report of the range here --></div>
+      </div>
+    </div>
+  </body>
+</html>
+<script>
+  // Start by loading the whole year 2019
+  document.addEventListener('DOMContentLoaded', function () {
+    let content = document.getElementById('content');
+    content.innerHTML = '<p>Ladataan...</p>';
+    fetch('http://localhost:3000/api/v2/HakaniemenKauppahalli')
+      .then((response) => {
+        return response.text();
+      })
+      .then((html) => {
+        content.innerHTML = html;
+      })
+      .catch((error) => {
+        content.innerHTML = 'Something went wrong! ' + error;
+      });
+  });
+  // Handle form to get data from a range of dates
+  const form = document.querySelector('form');
+  form.addEventListener('submit', (event) => {
+    event.preventDefault();
+    let rangeContent = document.getElementById('rangeContent');
+    let startTime = document.getElementById('StartTime').value;
+    let endTime = document.getElementById('EndTime').value;
+    // Swap dates if start is later than end
+    if (startTime > endTime) {
+      [startTime, endTime] = [endTime, startTime]
+    }
+    rangeContent.innerHTML = '<p>Loading...</p>';
+    fetch(
+      `http://localhost:3000/api/v2/HakaniemenKauppahalli/range?StartTime=${startTime}&EndTime=${endTime}`
+    )
+      .then((response) => {
+        return response.text();
+      })
+      .then((html) => {
+        rangeContent.innerHTML = html;
+      })
+      .catch((error) => {
+        rangeContent.innerHTML = 'Something went wrong! ' + error;
+      });
+  });
+</script>
